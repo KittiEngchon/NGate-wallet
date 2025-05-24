@@ -1,1 +1,29 @@
-...
+[
+  {
+    "symbol": "USDT",
+    "name": "Tether USD",
+    "contract": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    "chain": "Ethereum",
+    "decimals": 6,
+    "type": "token",
+    "logo": "assets/usdt.png"
+  },
+  {
+    "symbol": "MATIC",
+    "name": "Polygon",
+    "contract": "0x0000000000000000000000000000000000001010",
+    "chain": "Polygon",
+    "decimals": 18,
+    "type": "coin",
+    "logo": "assets/matic.png"
+  },
+  {
+    "symbol": "NGATE",
+    "name": "NGate Identity Token",
+    "contract": "0xABCDEF1234567890ABCDEF1234567890ABCDEF12",
+    "chain": "Polygon",
+    "decimals": 18,
+    "type": "nft",
+    "logo": "assets/ngate.png"
+  }
+]
