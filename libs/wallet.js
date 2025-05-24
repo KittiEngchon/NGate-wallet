@@ -51,3 +51,18 @@ async function connectWallet() {
     toast("Connection failed ❌");
   }
 }
+function showQR() {
+  const did = document.getElementById("did").textContent;
+  const qr = new QRious({
+    element: document.getElementById('qrCanvas'),
+    value: did,
+    size: 220
+  });
+
+  document.getElementById("qrText").textContent = did;
+  document.getElementById("qrModal").style.display = "flex";
+}
+
+function hideQR() {
+  document.getElementById("qrModal").style.display = "none";
+}
