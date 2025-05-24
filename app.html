@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>รายละเอียดแอป | Mobibox</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="libs/ui.js"></script>
+  <script src="libs/ai.js" defer></script>
+  <script src="libs/wallet.js" defer></script>
+</head>
+<body>
+  <a href="index.html">← กลับ</a>
+  <h1 id="app-name">กำลังโหลด...</h1>
+  <button onclick="connectWallet()">🔗 Connect Wallet</button>
+
+  <div id="app-detail">
+    <p id="description"></p>
+    <p>Chain: <span id="chain"></span></p>
+    <p>Category: <span id="category"></span></p>
+    <p>ผู้พัฒนา: <span id="developer"></span> <button onclick="copyDev()">📋 คัดลอก</button></p>
+    <a id="visit-btn" href="#" target="_blank" class="btn">🔗 ไปยังเว็บไซต์</a>
+  </div>
+
+  <hr />
+
+  <h3>🧠 Trust Score (AI)</h3>
+  <div id="trust-score">กำลังโหลด...</div>
+
+  <h3>🔗 แชร์แอป</h3>
+  <button onclick="copyLink()">🔗 คัดลอกลิงก์</button>
+  <button onclick="generateQR()">📱 QR Code</button>
+
+  <h3>⭐ รีวิวผู้ใช้</h3>
+  <div id="reviews">ยังไม่มีรีวิว</div>
+
+  <script>
+    async function loadAppDetail() {
+      const params = new URLSearchParams(window.location.search);
+      const appId = params.get("id");
+
+      const res = await fetch("data/apps.json");
+      const apps = await res.json();
+      const app = apps.find(a => a.id === appId);
+
+      if (!app) {
+        document.getElementById("app-name").innerText = "ไม่พบแอป";
+        return;
+      }
+
+      document.getElementById("app-name").innerText = app.name;
+      document.getElementById("description").innerText = app.description || "-";
+      document.getElementById("chain").innerText = app.chain || "-";
+      document.getElementById("category").innerText = app.category || "-";
+      document.getElementById("developer").innerText = app.developer || "-";
+      document.getElementById("visit-btn").href = app.url || "#";
+    }
+
+    function copyDev() {
+      const dev = document.getElementById("developer").innerText;
+      navigator.clipboard.writeText(dev);
+      showToast("คัดลอก address แล้ว");
+    }
+
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href);
+      showToast("คัดลอกลิงก์เรียบร้อย");
+    }
+
+    function generateQR() {
+      const url = window.location.href;
+      window.open(`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`, "_blank");
+    }
+
+    document.addEventListener("DOMContentLoaded", loadAppDetail);
+  </script>
+</body>
+</html>
