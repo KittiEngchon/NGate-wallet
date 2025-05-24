@@ -28,3 +28,26 @@ function withdraw() { toast("🏧 Withdraw clicked"); }
 function showQR() { toast("🔳 QR Code shown"); }
 function transfer() { toast("🔁 Transfer clicked"); }
 
+async function connectWallet() {
+  if (typeof window.ethereum === 'undefined') {
+    toast("Metamask not found ❌");
+    return;
+  }
+
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const address = accounts[0];
+    toast("Wallet connected ✅");
+
+    // อัปเดต DID/GIG แบบ Dynamic
+    document.getElementById("walletAddress").textContent = address;
+    document.getElementById("did").textContent = "did:ngate:" + address;
+    document.getElementById("gig").textContent = "gig:connected";
+
+    // เก็บไว้ใน localStorage ถ้าต้องการใช้ต่อ
+    localStorage.setItem("wallet", address);
+  } catch (err) {
+    console.error(err);
+    toast("Connection failed ❌");
+  }
+}
