@@ -42,6 +42,16 @@
     </footer>
   </div>
 
+  <div id="qrModal" class="modal" style="display:none">
+  <div class="modal-content">
+    <span class="close" onclick="hideQR()">&times;</span>
+    <h3>🔳 DID QR Code</h3>
+    <canvas id="qrCanvas"></canvas>
+    <p id="qrText" style="font-size: 0.9em; word-break: break-all;"></p>
+  </div>
+</div>
+
+
   <script src="libs/wallet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 </body>
