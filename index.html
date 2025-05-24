@@ -7,49 +7,40 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="wallet-container">
-    <div class="header">
-      <img src="assets/logo.png" alt="NFT Logo" class="logo"/>
+  <div class="container">
+    <header>
+      <img src="assets/logo.png" alt="Logo" class="logo" />
       <div class="wallet-info">
-        <div class="address">0xfa....229E</div>
-        <div class="info">DID : ABC888999XYZ</div>
-        <div class="info">GIG : 0112378955</div>
+        <p><strong>Address:</strong> <span id="walletAddress">0x...</span></p>
+        <p><strong>DID:</strong> <span id="did">did:example:1234</span></p>
+        <p><strong>GIG:</strong> <span id="gig">google-oauth:john.doe</span></p>
       </div>
-      <div class="notify-icon">🔔<span class="badge">1</span></div>
-    </div>
+    </header>
 
-    <div class="balance-card">
-      <div class="balance-amount">$1,445.37 <span class="currency">USD</span></div>
-      <div class="pnl">PNL <span class="loss">- $2.14 (-0.15%)</span></div>
-    </div>
+    <section class="balance">
+      <h2>Balance</h2>
+      <div id="balanceDisplay">$1,200.00</div>
+      <p class="pnl">PNL: +12.5%</p>
+    </section>
 
-    <div class="actions">
-      <button class="action-btn">⬇️<br>Deposit</button>
-      <button class="action-btn">⬆️<br>Withdraw</button>
-      <button class="action-btn">📷<br>QR</button>
-      <button class="action-btn">🔁<br>Transfer</button>
-    </div>
+    <section class="actions">
+      <button onclick="deposit()">💰 Deposit</button>
+      <button onclick="withdraw()">🏧 Withdraw</button>
+      <button onclick="showQR()">🔳 QR</button>
+      <button onclick="transfer()">🔁 Transfer</button>
+    </section>
 
-    <div class="wallet-assets">
-      <div class="asset-card">
-        <div class="asset-code">EUR</div>
-        <div class="asset-balance">386.20457026</div>
-        <div class="asset-fiat">$397.13</div>
-      </div>
-      <div class="asset-card">
-        <div class="asset-code">EUR</div>
-        <div class="asset-balance">386.20457026</div>
-        <div class="asset-fiat">$397.13</div>
-      </div>
-    </div>
+    <footer>
+      <nav>
+        <button>🏠 Home</button>
+        <button>📜 History</button>
+        <button>🧾 Statement</button>
+        <button>⚙️ Settings</button>
+      </nav>
+    </footer>
   </div>
 
-  <nav class="bottom-nav">
-    <button>🏠<br>หน้าแรก</button>
-    <button>📊<br>ลงทุน</button>
-    <button class="buy-btn">฿<br>BUY</button>
-    <button>📄<br>Statement</button>
-    <button>⋯<br>อื่นๆ</button>
-  </nav>
+  <script src="libs/wallet.js"></script>
 </body>
 </html>
+
