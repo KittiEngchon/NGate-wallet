@@ -35,6 +35,20 @@
   </section>
 
   <script>
+    async function connectWallet() {
+    if (window.ethereum) {
+      try {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        const web3 = new Web3(window.ethereum);
+        console.log("Connected:", accounts[0]);
+        return accounts[0];
+      } catch (error) {
+        console.error("User denied wallet connection");
+      }
+    } else {
+      alert("Please install MetaMask to use this feature.");
+    }
+  }
     async function init() {
       const address = await connectWallet();
       if (!address) return;
