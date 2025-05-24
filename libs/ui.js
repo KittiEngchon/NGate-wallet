@@ -40,5 +40,41 @@ function loadTheme() {
     document.body.classList.add("dark");
   }
 }
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  showToast(document.body.classList.contains('dark') ? '🌙 Dark Mode' : '☀️ Light Mode');
+}
+
+function showToast(message) {
+  let toast = document.querySelector('.toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'toast';
+    document.body.appendChild(toast);
+  }
+  toast.innerText = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function showQR(text) {
+  const canvas = document.getElementById("qr-canvas");
+  if (!canvas) return;
+  const qr = new QRious({
+    element: canvas,
+    value: text,
+    size: 200,
+  });
+}
+
+function saveQR() {
+  const canvas = document.getElementById("qr-canvas");
+  if (!canvas) return;
+  const link = document.createElement("a");
+  link.download = "did-qr.png";
+  link.href = canvas.toDataURL();
+  link.click();
+}
+
 
 document.addEventListener("DOMContentLoaded", loadTheme);
