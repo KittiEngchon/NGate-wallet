@@ -5,77 +5,107 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NGate DID Wallet</title>
   <link rel="stylesheet" href="style.css" />
-
-  <!-- ใช้เวอร์ชันที่เชื่อถือได้ของ web3 -->
   <script src="https://cdn.jsdelivr.net/npm/web3@1.10.3/dist/web3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
-
-  <!-- โหลดไลบรารีที่ต้องใช้ -->
-  <script src="libs/ui.js"></script>
-  <script src="libs/wallet.js"></script>
-  <script src="libs/kyc.js"></script>
-  <script src="libs/balance.js"></script>
 </head>
-<body>
-  <header>
-    <h1>🆔 NGate DID Wallet</h1>
-    <div>
-      <button onclick="connectWallet()">🔗 เชื่อม Wallet</button>
-      <button onclick="toggleTheme()">🌓 Toggle Theme</button>
+<body class="mobile-ui">
+  <div class="wallet-header">
+    <div class="wallet-top">
+      <img src="assets/nft-logo.png" class="logo" />
+      <div class="wallet-address">0xfa....229E</div>
+      <div class="notif-icon">🔔<span class="dot">1</span></div>
     </div>
-  </header>
+    <div class="user-info">
+      <div>DID : <span id="did">-</span></div>
+      <div>GIG : <span id="gig">-</span></div>
+    </div>
+  </div>
 
-  <section>
-    <h2>👤 ข้อมูลผู้ใช้</h2>
-    <p id="user-info">กำลังโหลด...</p>
+  <div class="wallet-balance">
+    <div class="balance-circle">
+      <div class="balance-amount" id="total-balance">$0.00 <span class="unit">USD</span></div>
+      <div class="pnl" id="pnl">PNL: $0.00</div>
+      <div class="settings">⚙️</div>
+    </div>
+  </div>
 
-    <h2>📲 DID & แชร์ QR</h2>
-    <p id="did">-</p>
-    <canvas id="qrCanvas"></canvas>
-    <button onclick="downloadQR()">💾 บันทึก QR</button>
+  <div class="action-buttons">
+    <button class="circle-button">⬆️<br/>Deposit</button>
+    <button class="circle-button">⬇️<br/>Withdraw</button>
+    <button class="circle-button" onclick="showQR()">🔳<br/>QR</button>
+    <button class="circle-button">🔁<br/>Transfer</button>
+  </div>
 
-    <h2>💰 ยอดคงเหลือ</h2>
-    <ul id="balance-list"></ul>
-  </section>
+  <div class="token-list" id="balance-list">
+    <!-- token แสดงตรงนี้ -->
+  </div>
 
-  <div id="qrModal" style="display:none; position:fixed; inset:0; background:#00000080; align-items:center; justify-content:center; flex-direction:column;">
+  <div class="bottom-nav">
+    <button>🏠<br/>หน้าแรก</button>
+    <button>📊<br/>ลงทุน</button>
+    <button class="buy">🅱<br/>BUY</button>
+    <button>📄<br/>Statement</button>
+    <button>⋯<br/>อื่นๆ</button>
+  </div>
+
+  <!-- QR Modal -->
+  <div id="qrModal" style="display:none;" class="qr-modal">
     <canvas id="qrCanvas"></canvas>
     <p id="qrText"></p>
     <button onclick="hideQR()">❌ ปิด</button>
     <button onclick="downloadQR()">⬇️ ดาวน์โหลด</button>
   </div>
 
-  <script>
+  <!-- Script Module -->
+  <script type="module">
+    import { connectWallet } from './libs/wallet.js';
+    import { getUserInfo } from './libs/kyc.js';
+    import { getBalances } from './libs/balance.js';
+    import { showQR, hideQR, downloadQR } from './libs/ui.js';
+
     async function init() {
       try {
         const address = await connectWallet();
         if (!address) return;
 
         const user = await getUserInfo(address);
-        const info = document.getElementById('user-info');
-
         if (user) {
-          info.innerText = `${user.name} (${user.email})`;
-          document.getElementById('did').textContent = user.did;
-          showQR(); // ใช้ฟังก์ชันจาก wallet.js
-        } else {
-          info.innerText = 'ไม่พบข้อมูลผู้ใช้';
+          document.getElementById('did').textContent = user.did || "-";
+          document.getElementById('gig').textContent = user.gig || "-";
         }
 
         const balances = await getBalances(address);
+        let total = 0;
         const list = document.getElementById('balance-list');
+        list.innerHTML = "";
+
         balances.forEach(token => {
-          const li = document.createElement('li');
-          li.innerText = `${token.symbol}: ${token.amount}`;
-          list.appendChild(li);
+          const usd = parseFloat(token.usd || 0);
+          total += usd;
+          const item = document.createElement('div');
+          item.className = 'token-item';
+          item.innerHTML = `
+            <div class="symbol">${token.symbol}</div>
+            <div class="amount">${token.amount}</div>
+            <div class="usd">$${usd.toFixed(2)}</div>
+          `;
+          list.appendChild(item);
         });
+
+        document.getElementById('total-balance').innerHTML = `$${total.toFixed(2)} <span class="unit">USD</span>`;
+        document.getElementById('pnl').innerHTML = `PNL: -$2.14 (-0.15%)`; // mock data
       } catch (e) {
         console.error(e);
-        toast("เกิดข้อผิดพลาดระหว่างโหลดข้อมูล");
+        alert("เกิดข้อผิดพลาด");
       }
     }
+
+    window.showQR = showQR;
+    window.downloadQR = downloadQR;
+    window.hideQR = hideQR;
 
     window.addEventListener("load", init);
   </script>
 </body>
 </html>
+
