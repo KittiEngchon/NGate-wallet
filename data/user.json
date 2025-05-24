@@ -1,7 +1,20 @@
-{
-  "address": "0xfa28229e8aa7c351",
-  "did": "did:ngate:0xfa28229e8aa7c351",
-  "gig": "gig:google:kitti.engchon",
-  "balance": 1200.00,
-  "pnl": 12.5
-}
+[
+  {
+    "wallet": "0x1234567890abcdef1234567890abcdef12345678",
+    "did": "did:ngate:0x1234567890abcdef1234567890abcdef12345678",
+    "gig": "gig:connected",
+    "kyc": true,
+    "name": "Alice",
+    "email": "alice@example.com",
+    "created": "2025-05-25T14:30:00Z"
+  },
+  {
+    "wallet": "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+    "did": "did:ngate:0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+    "gig": "gig:connected",
+    "kyc": false,
+    "name": "Bob",
+    "email": "bob@example.com",
+    "created": "2025-05-24T10:15:00Z"
+  }
+]
