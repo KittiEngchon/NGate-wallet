@@ -78,5 +78,9 @@ function saveQR() {
 function toggleTheme() {
   document.body.classList.toggle("dark-theme");
 }
+function saveQR() {
+  alert("QR saved (placeholder)");
+  // หรือเขียน logic สร้าง QR แล้วดาวน์โหลด
+}
 
 document.addEventListener("DOMContentLoaded", loadTheme);
