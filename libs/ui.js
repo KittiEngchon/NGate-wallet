@@ -75,6 +75,8 @@ function saveQR() {
   link.href = canvas.toDataURL();
   link.click();
 }
-
+function toggleTheme() {
+  document.body.classList.toggle("dark-theme");
+}
 
 document.addEventListener("DOMContentLoaded", loadTheme);
