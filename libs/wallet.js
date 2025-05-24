@@ -66,3 +66,14 @@ function showQR() {
 function hideQR() {
   document.getElementById("qrModal").style.display = "none";
 }
+function downloadQR() {
+  const canvas = document.getElementById("qrCanvas");
+  const link = document.createElement("a");
+
+  link.download = "ngate-did-qr.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+
+  toast("📥 QR ถูกดาวน์โหลดแล้ว");
+}
+
