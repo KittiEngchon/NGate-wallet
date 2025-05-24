@@ -1,81 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NGate DID Wallet</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="libs/wallet.js"></script>
-  <script src="libs/ui.js"></script>
-  <script src="libs/analytics.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NGate Wallet</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to bottom right, #1f2e3b, #2c3e50);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 100px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 90%;
+      padding: 20px;
+    }
+    .header .info {
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+    }
+    .balance {
+      margin: 10px 0;
+      text-align: center;
+    }
+    .balance .amount {
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .balance .pnl {
+      font-size: 14px;
+      color: #ff5f5f;
+    }
+    .action-buttons {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      margin: 20px 0;
+    }
+    .action-buttons button {
+      background: #1e2a36;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .wallet-info {
+      background: #131c26;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      width: 90%;
+    }
+    .wallet-info p {
+      margin: 5px 0;
+      font-size: 13px;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #0e151d;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #444;
+    }
+    .bottom-nav div {
+      text-align: center;
+      font-size: 12px;
+      color: white;
+    }
+    .buy-button {
+      position: absolute;
+      bottom: 40px;
+      background: #33e0b3;
+      color: black;
+      font-weight: bold;
+      padding: 15px;
+      border-radius: 50%;
+      border: 4px solid white;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <div class="profile">
-        <img src="assets/nft-logo.png" alt="NFT Logo" class="logo" />
-        <div class="address">0xfa....229E</div>
-      </div>
-      <div class="top-actions">
-        <span class="notif">🔴1</span>
-        <span class="power">⏻</span>
-      </div>
-    </header>
-
-    <div class="info-box">
-      <div class="did-info">
-        <div>DID : <span>ABC888999XYZ</span></div>
-        <div>GIG : <span>0112378955</span></div>
-      </div>
-      <div class="balance-circle">
-        <div class="amount">$1,445.37 <small>USD</small></div>
-        <div class="pnl-loss">PNL <span class="loss">- $2.14 (-0.15%)</span></div>
-        <div class="gear">⚙️</div>
-      </div>
+  <div class="header">
+    <img src="assets/nft-logo.png" alt="NFT" width="40" height="40" style="border-radius: 50%; background: white;">
+    <div class="info">
+      <span>0xfa....229E</span>
+      <span>DID : ABC888999XYZ</span>
+      <span>GIG : 0112378955</span>
     </div>
-
-    <div class="carousel-dots">● ● ● ●</div>
-
-    <div class="actions">
-      <div class="action"><img src="assets/deposit.png" /><span>Deposit</span></div>
-      <div class="action"><img src="assets/withdraw.png" /><span>Withdraw</span></div>
-      <div class="action" onclick="downloadQR()"><img src="assets/qr.png" /><span>QR</span></div>
-      <div class="action"><img src="assets/transfer.png" /><span>Transfer</span></div>
+    <div>
+      <span style="color: red;">🔔1</span>
+      <span>⏻</span>
     </div>
+  </div>
+  <div class="balance">
+    <div class="amount">$1,445.37 USD</div>
+    <div class="pnl">PNL: -$2.14 (-0.15%)</div>
+  </div>
 
-    <div class="wallet-list">
-      <div class="wallet-item">
-        <div class="wallet-icon">💶</div>
-        <div class="wallet-info">
-          <div>EUR</div>
-          <div class="wallet-sub">Euro</div>
-        </div>
-        <div class="wallet-value">
-          <div>386.20457026</div>
-          <div class="wallet-usd">$397.13</div>
-        </div>
-      </div>
-      <div class="wallet-item">
-        <div class="wallet-icon">💶</div>
-        <div class="wallet-info">
-          <div>EUR</div>
-          <div class="wallet-sub">Euro</div>
-        </div>
-        <div class="wallet-value">
-          <div>386.20457026</div>
-          <div class="wallet-usd">$397.13</div>
-        </div>
-      </div>
-    </div>
+  <div class="action-buttons">
+    <button>📥<br>Deposit</button>
+    <button>📤<br>Withdraw</button>
+    <button>🔳<br>QR</button>
+    <button>🔁<br>Transfer</button>
+  </div>
 
-    <nav class="bottom-nav">
-      <div class="nav-item">🏠 หน้าแรก</div>
-      <div class="nav-item">📊 ลงทุน</div>
-      <div class="nav-item active">🅱️ BUY</div>
-      <div class="nav-item">📄 Statement</div>
-      <div class="nav-item">⋯ อื่นๆ</div>
-    </nav>
+  <div class="wallet-info">
+    <p>€ EUR — 386.20457026 ($397.13)</p>
+  </div>
+  <div class="wallet-info">
+    <p>€ EUR — 386.20457026 ($397.13)</p>
+  </div>
+
+  <button class="buy-button">฿<br>BUY</button>
+
+  <div class="bottom-nav">
+    <div>🏠<br>หน้าแรก</div>
+    <div>📊<br>ลงทุน</div>
+    <div style="width: 60px;"></div>
+    <div>📄<br>Statement</div>
+    <div>⋯<br>อื่นๆ</div>
   </div>
 </body>
 </html>
+
 
