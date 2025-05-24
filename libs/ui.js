@@ -1,7 +1,7 @@
 // ui.js
 
 function toast(message, duration = 3000) {
-  const t = document.createElement("div");
+  let t = document.createElement("div");
   t.className = "toast";
   t.innerText = message;
   document.body.appendChild(t);
@@ -31,7 +31,9 @@ function showModal(title, content) {
 
 function toggleTheme() {
   document.body.classList.toggle("dark");
-  localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+  const isDark = document.body.classList.contains("dark");
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+  toast(isDark ? "🌙 Dark Mode" : "☀️ Light Mode");
 }
 
 function loadTheme() {
@@ -40,27 +42,11 @@ function loadTheme() {
     document.body.classList.add("dark");
   }
 }
-function toggleTheme() {
-  document.body.classList.toggle('dark');
-  showToast(document.body.classList.contains('dark') ? '🌙 Dark Mode' : '☀️ Light Mode');
-}
-
-function showToast(message) {
-  let toast = document.querySelector('.toast');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.className = 'toast';
-    document.body.appendChild(toast);
-  }
-  toast.innerText = message;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
-}
 
 function showQR(text) {
   const canvas = document.getElementById("qr-canvas");
   if (!canvas) return;
-  const qr = new QRious({
+  new QRious({
     element: canvas,
     value: text,
     size: 200,
@@ -74,13 +60,7 @@ function saveQR() {
   link.download = "did-qr.png";
   link.href = canvas.toDataURL();
   link.click();
-}
-function toggleTheme() {
-  document.body.classList.toggle("dark-theme");
-}
-function saveQR() {
-  alert("QR saved (placeholder)");
-  // หรือเขียน logic สร้าง QR แล้วดาวน์โหลด
+  toast("📥 QR บันทึกแล้ว");
 }
 
 document.addEventListener("DOMContentLoaded", loadTheme);
