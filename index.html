@@ -1,60 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DID Wallet Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NGate DID Wallet</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="libs/web3.min.js"></script>
+  <script src="wallet.js"></script>
+  <script src="kyc.js"></script>
+  <script src="balance.js"></script>
+  <script src="ui.js"></script>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <img src="assets/logo.png" alt="Logo" class="logo" />
-      <div class="wallet-info">
-        <!-- ด้านบนสุดใน <body> -->
-        <button class="connect-btn" onclick="connectWallet()">🔗 Connect Wallet</button>
-        <p><strong>Address:</strong> <span id="walletAddress">0x...</span></p>
-        <p><strong>DID:</strong> <span id="did">did:example:1234</span></p>
-        <p><strong>GIG:</strong> <span id="gig">google-oauth:john.doe</span></p>
-      </div>
-    </header>
+  <header>
+    <h1>🆔 NGate DID Wallet</h1>
+    <div>
+      <button onclick="connectWallet()">🔗 เชื่อม Wallet</button>
+      <button onclick="toggleTheme()">🌓 Toggle Theme</button>
+    </div>
+  </header>
 
-    <section class="balance">
-      <h2>Balance</h2>
-      <div id="balanceDisplay">$1,200.00</div>
-      <p class="pnl">PNL: +12.5%</p>
-    </section>
+  <section>
+    <h2>👤 ข้อมูลผู้ใช้</h2>
+    <p id="user-info">กำลังโหลด...</p>
 
-    <section class="actions">
-      <button onclick="deposit()">💰 Deposit</button>
-      <button onclick="withdraw()">🏧 Withdraw</button>
-      <button onclick="showQR()">🔳 QR</button>
-      <button onclick="transfer()">🔁 Transfer</button>
-      <button onclick="downloadQR()">📥 ดาวน์โหลด QR</button>
-    </section>
+    <h2>📲 DID & แชร์ QR</h2>
+    <p id="did-display"></p>
+    <canvas id="qr-canvas"></canvas>
+    <button onclick="saveQR()">💾 บันทึก QR</button>
 
-    <footer>
-      <nav>
-        <button>🏠 Home</button>
-        <button>📜 History</button>
-        <button>🧾 Statement</button>
-        <button>⚙️ Settings</button>
-      </nav>
-    </footer>
-  </div>
+    <h2>💰 ยอดคงเหลือ</h2>
+    <ul id="balance-list"></ul>
+  </section>
 
-  <div id="qrModal" class="modal" style="display:none">
-  <div class="modal-content">
-    <span class="close" onclick="hideQR()">&times;</span>
-    <h3>🔳 DID QR Code</h3>
-    <canvas id="qrCanvas"></canvas>
-    <p id="qrText" style="font-size: 0.9em; word-break: break-all;"></p>
-  </div>
-</div>
+  <script>
+    async function init() {
+      const address = await connectWallet();
+      if (!address) return;
 
+      const user = await getUserInfo(address);
+      const info = document.getElementById('user-info');
+      if (user) {
+        info.innerText = `${user.name} (${user.email})`;
+        document.getElementById('did-display').innerText = user.did;
+        showQR(user.did);
+      } else {
+        info.innerText = 'ไม่พบข้อมูลผู้ใช้';
+      }
 
-  <script src="libs/wallet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+      const balances = await getBalances(address);
+      const list = document.getElementById('balance-list');
+      balances.forEach(token => {
+        const li = document.createElement('li');
+        li.innerText = `${token.symbol}: ${token.amount}`;
+        list.appendChild(li);
+      });
+    }
+
+    window.addEventListener("load", init);
+  </script>
 </body>
 </html>
-
