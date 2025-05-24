@@ -1,55 +1,83 @@
-// wallet.js
+let isConnecting = false;
 
-async function connectWallet() {
-  if (typeof window.ethereum === 'undefined') {
-    toast("Metamask not found ❌");
-    throw new Error("No wallet found");
+/**
+ * เชื่อมต่อกับ MetaMask
+ * @returns {Promise<string|null>} address ของ wallet หรือ null ถ้าเชื่อมต่อไม่สำเร็จ
+ */
+export async function connectWallet() {
+  if (typeof window.ethereum === "undefined") {
+    alert("กรุณาติดตั้ง MetaMask ก่อน");
+    return null;
   }
+
+  if (isConnecting) {
+    console.log("กำลังเชื่อมต่อ MetaMask อยู่...");
+    return null;
+  }
+
+  isConnecting = true;
 
   try {
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const address = accounts[0];
-    toast("Wallet connected ✅");
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
 
-    // อัปเดตข้อมูลลงหน้าเว็บ
-    document.getElementById("walletAddress").textContent = address;
-    document.getElementById("did").textContent = "did:ngate:" + address;
-    document.getElementById("gig").textContent = "gig:connected";
-
-    // เก็บใน localStorage
-    localStorage.setItem("wallet", address);
-    return address;
-
+    isConnecting = false;
+    return accounts[0]; // คืนค่า address
   } catch (err) {
-    console.error(err);
-    toast("Connection failed ❌");
-    throw err;
+    isConnecting = false;
+
+    if (err.code === -32002) {
+      alert("กรุณาเปิด MetaMask และอนุมัติคำขอที่ค้างอยู่");
+    } else {
+      console.error("เกิดข้อผิดพลาดในการเชื่อมต่อ MetaMask:", err);
+    }
+
+    return null;
   }
 }
 
-function showQR() {
-  const did = document.getElementById("did").textContent;
-  const qr = new QRious({
-    element: document.getElementById('qrCanvas'),
-    value: did,
-    size: 220
-  });
+/**
+ * ตรวจสอบว่า wallet เชื่อมอยู่หรือไม่
+ * @returns {Promise<string|null>} address ถ้าเชื่อมอยู่ หรือ null ถ้ายังไม่ได้เชื่อม
+ */
+export async function checkWalletConnected() {
+  if (typeof window.ethereum === "undefined") return null;
 
-  document.getElementById("qrText").textContent = did;
-  document.getElementById("qrModal").style.display = "flex";
+  try {
+    const accounts = await window.ethereum.request({
+      method: "eth_accounts",
+    });
+
+    return accounts.length > 0 ? accounts[0] : null;
+  } catch (err) {
+    console.error("ไม่สามารถตรวจสอบ wallet ได้:", err);
+    return null;
+  }
 }
 
-function hideQR() {
-  document.getElementById("qrModal").style.display = "none";
+/**
+ * ติดตาม event การเปลี่ยนบัญชี
+ * @param {(address: string|null) => void} callback
+ */
+export function onWalletChanged(callback) {
+  if (window.ethereum) {
+    window.ethereum.on("accountsChanged", (accounts) => {
+      callback(accounts.length > 0 ? accounts[0] : null);
+    });
+  }
 }
 
-function downloadQR() {
-  const canvas = document.getElementById("qrCanvas");
-  const link = document.createElement("a");
-  link.download = "ngate-did-qr.png";
-  link.href = canvas.toDataURL("image/png");
-  link.click();
-  toast("📥 QR ถูกดาวน์โหลดแล้ว");
+/**
+ * ติดตาม event การเปลี่ยน network
+ * @param {(chainId: string) => void} callback
+ */
+export function onChainChanged(callback) {
+  if (window.ethereum) {
+    window.ethereum.on("chainChanged", (chainId) => {
+      callback(chainId);
+    });
+  }
 }
 
 
