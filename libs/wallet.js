@@ -1,25 +1,30 @@
 // wallet.js
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Mock data
-  document.getElementById("walletAddress").textContent = "0xfa28...229E";
-  document.getElementById("did").textContent = "did:ngate:0xfa28229e";
-  document.getElementById("gig").textContent = "gig:facebook:john.doe";
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch("data/user.json");
+    const user = await res.json();
+
+    document.getElementById("walletAddress").textContent = user.address;
+    document.getElementById("did").textContent = user.did;
+    document.getElementById("gig").textContent = user.gig;
+    document.getElementById("balanceDisplay").textContent = `$${user.balance.toFixed(2)}`;
+    document.querySelector(".pnl").textContent = `PNL: ${user.pnl > 0 ? '+' : ''}${user.pnl}%`;
+  } catch (err) {
+    console.error("Load user failed:", err);
+  }
 });
 
-function deposit() {
-  alert("Deposit clicked");
+function toast(msg) {
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.innerText = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
 }
 
-function withdraw() {
-  alert("Withdraw clicked");
-}
-
-function showQR() {
-  alert("Show QR clicked");
-}
-
-function transfer() {
-  alert("Transfer clicked");
-}
+function deposit() { toast("💰 Deposit clicked"); }
+function withdraw() { toast("🏧 Withdraw clicked"); }
+function showQR() { toast("🔳 QR Code shown"); }
+function transfer() { toast("🔁 Transfer clicked"); }
 
