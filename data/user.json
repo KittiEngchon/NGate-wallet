@@ -1,1 +1,7 @@
-...
+{
+  "address": "0xfa28229e8aa7c351",
+  "did": "did:ngate:0xfa28229e8aa7c351",
+  "gig": "gig:google:kitti.engchon",
+  "balance": 1200.00,
+  "pnl": 12.5
+}
