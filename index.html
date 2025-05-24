@@ -5,12 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NGate DID Wallet</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="libs/web3.min.js"></script>
-  <script src="libs/wallet.js"></script>
-  <script src="kyc.js"></script>
-  <script src="balance.js"></script>
-  <script src="ui.js"></script>
+
+  <!-- ใช้เวอร์ชันที่เชื่อถือได้ของ web3 -->
   <script src="https://cdn.jsdelivr.net/npm/web3@1.10.3/dist/web3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+
+  <!-- โหลดไลบรารีที่ต้องใช้ -->
+  <script src="libs/ui.js"></script>
+  <script src="libs/wallet.js"></script>
+  <script src="libs/kyc.js"></script>
+  <script src="libs/balance.js"></script>
 </head>
 <body>
   <header>
@@ -26,50 +30,49 @@
     <p id="user-info">กำลังโหลด...</p>
 
     <h2>📲 DID & แชร์ QR</h2>
-    <p id="did-display"></p>
-    <canvas id="qr-canvas"></canvas>
-    <button onclick="saveQR()">💾 บันทึก QR</button>
+    <p id="did">-</p>
+    <canvas id="qrCanvas"></canvas>
+    <button onclick="downloadQR()">💾 บันทึก QR</button>
 
     <h2>💰 ยอดคงเหลือ</h2>
     <ul id="balance-list"></ul>
   </section>
 
+  <div id="qrModal" style="display:none; position:fixed; inset:0; background:#00000080; align-items:center; justify-content:center; flex-direction:column;">
+    <canvas id="qrCanvas"></canvas>
+    <p id="qrText"></p>
+    <button onclick="hideQR()">❌ ปิด</button>
+    <button onclick="downloadQR()">⬇️ ดาวน์โหลด</button>
+  </div>
+
   <script>
-    async function connectWallet() {
-    if (window.ethereum) {
-      try {
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        const web3 = new Web3(window.ethereum);
-        console.log("Connected:", accounts[0]);
-        return accounts[0];
-      } catch (error) {
-        console.error("User denied wallet connection");
-      }
-    } else {
-      alert("Please install MetaMask to use this feature.");
-    }
-  }
     async function init() {
-      const address = await connectWallet();
-      if (!address) return;
+      try {
+        const address = await connectWallet();
+        if (!address) return;
 
-      const user = await getUserInfo(address);
-      const info = document.getElementById('user-info');
-      if (user) {
-        info.innerText = `${user.name} (${user.email})`;
-        document.getElementById('did-display').innerText = user.did;
-        showQR(user.did);
-      } else {
-        info.innerText = 'ไม่พบข้อมูลผู้ใช้';
+        const user = await getUserInfo(address);
+        const info = document.getElementById('user-info');
+
+        if (user) {
+          info.innerText = `${user.name} (${user.email})`;
+          document.getElementById('did').textContent = user.did;
+          showQR(); // ใช้ฟังก์ชันจาก wallet.js
+        } else {
+          info.innerText = 'ไม่พบข้อมูลผู้ใช้';
+        }
+
+        const balances = await getBalances(address);
+        const list = document.getElementById('balance-list');
+        balances.forEach(token => {
+          const li = document.createElement('li');
+          li.innerText = `${token.symbol}: ${token.amount}`;
+          list.appendChild(li);
+        });
+      } catch (e) {
+        console.error(e);
+        toast("เกิดข้อผิดพลาดระหว่างโหลดข้อมูล");
       }
-
-      const balances = await getBalances(address);
-      const list = document.getElementById('balance-list');
-      balances.forEach(token => {
-        const li = document.createElement('li');
-        li.innerText = `${token.symbol}: ${token.amount}`;
-        list.appendChild(li);
-      });
     }
 
     window.addEventListener("load", init);
