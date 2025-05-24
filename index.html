@@ -1,111 +1,81 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NGate DID Wallet</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.10.3/dist/web3.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+  <script src="libs/wallet.js"></script>
+  <script src="libs/ui.js"></script>
+  <script src="libs/analytics.js"></script>
 </head>
-<body class="mobile-ui">
-  <div class="wallet-header">
-    <div class="wallet-top">
-      <img src="assets/nft-logo.png" class="logo" />
-      <div class="wallet-address">0xfa....229E</div>
-      <div class="notif-icon">🔔<span class="dot">1</span></div>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="profile">
+        <img src="assets/nft-logo.png" alt="NFT Logo" class="logo" />
+        <div class="address">0xfa....229E</div>
+      </div>
+      <div class="top-actions">
+        <span class="notif">🔴1</span>
+        <span class="power">⏻</span>
+      </div>
+    </header>
+
+    <div class="info-box">
+      <div class="did-info">
+        <div>DID : <span>ABC888999XYZ</span></div>
+        <div>GIG : <span>0112378955</span></div>
+      </div>
+      <div class="balance-circle">
+        <div class="amount">$1,445.37 <small>USD</small></div>
+        <div class="pnl-loss">PNL <span class="loss">- $2.14 (-0.15%)</span></div>
+        <div class="gear">⚙️</div>
+      </div>
     </div>
-    <div class="user-info">
-      <div>DID : <span id="did">-</span></div>
-      <div>GIG : <span id="gig">-</span></div>
+
+    <div class="carousel-dots">● ● ● ●</div>
+
+    <div class="actions">
+      <div class="action"><img src="assets/deposit.png" /><span>Deposit</span></div>
+      <div class="action"><img src="assets/withdraw.png" /><span>Withdraw</span></div>
+      <div class="action" onclick="downloadQR()"><img src="assets/qr.png" /><span>QR</span></div>
+      <div class="action"><img src="assets/transfer.png" /><span>Transfer</span></div>
     </div>
-  </div>
 
-  <div class="wallet-balance">
-    <div class="balance-circle">
-      <div class="balance-amount" id="total-balance">$0.00 <span class="unit">USD</span></div>
-      <div class="pnl" id="pnl">PNL: $0.00</div>
-      <div class="settings">⚙️</div>
+    <div class="wallet-list">
+      <div class="wallet-item">
+        <div class="wallet-icon">💶</div>
+        <div class="wallet-info">
+          <div>EUR</div>
+          <div class="wallet-sub">Euro</div>
+        </div>
+        <div class="wallet-value">
+          <div>386.20457026</div>
+          <div class="wallet-usd">$397.13</div>
+        </div>
+      </div>
+      <div class="wallet-item">
+        <div class="wallet-icon">💶</div>
+        <div class="wallet-info">
+          <div>EUR</div>
+          <div class="wallet-sub">Euro</div>
+        </div>
+        <div class="wallet-value">
+          <div>386.20457026</div>
+          <div class="wallet-usd">$397.13</div>
+        </div>
+      </div>
     </div>
+
+    <nav class="bottom-nav">
+      <div class="nav-item">🏠 หน้าแรก</div>
+      <div class="nav-item">📊 ลงทุน</div>
+      <div class="nav-item active">🅱️ BUY</div>
+      <div class="nav-item">📄 Statement</div>
+      <div class="nav-item">⋯ อื่นๆ</div>
+    </nav>
   </div>
-
-  <div class="action-buttons">
-    <button class="circle-button">⬆️<br/>Deposit</button>
-    <button class="circle-button">⬇️<br/>Withdraw</button>
-    <button class="circle-button" onclick="showQR()">🔳<br/>QR</button>
-    <button class="circle-button">🔁<br/>Transfer</button>
-  </div>
-
-  <div class="token-list" id="balance-list">
-    <!-- token แสดงตรงนี้ -->
-  </div>
-
-  <div class="bottom-nav">
-    <button>🏠<br/>หน้าแรก</button>
-    <button>📊<br/>ลงทุน</button>
-    <button class="buy">🅱<br/>BUY</button>
-    <button>📄<br/>Statement</button>
-    <button>⋯<br/>อื่นๆ</button>
-  </div>
-
-  <!-- QR Modal -->
-  <div id="qrModal" style="display:none;" class="qr-modal">
-    <canvas id="qrCanvas"></canvas>
-    <p id="qrText"></p>
-    <button onclick="hideQR()">❌ ปิด</button>
-    <button onclick="downloadQR()">⬇️ ดาวน์โหลด</button>
-  </div>
-
-  <!-- Script Module -->
-  <script type="module">
-    import { connectWallet } from './libs/wallet.js';
-    import { getUserInfo } from './libs/kyc.js';
-    import { getBalances } from './libs/balance.js';
-    import { showQR, hideQR, downloadQR } from './libs/ui.js';
-
-    async function init() {
-      try {
-        const address = await connectWallet();
-        if (!address) return;
-
-        const user = await getUserInfo(address);
-        if (user) {
-          document.getElementById('did').textContent = user.did || "-";
-          document.getElementById('gig').textContent = user.gig || "-";
-        }
-
-        const balances = await getBalances(address);
-        let total = 0;
-        const list = document.getElementById('balance-list');
-        list.innerHTML = "";
-
-        balances.forEach(token => {
-          const usd = parseFloat(token.usd || 0);
-          total += usd;
-          const item = document.createElement('div');
-          item.className = 'token-item';
-          item.innerHTML = `
-            <div class="symbol">${token.symbol}</div>
-            <div class="amount">${token.amount}</div>
-            <div class="usd">$${usd.toFixed(2)}</div>
-          `;
-          list.appendChild(item);
-        });
-
-        document.getElementById('total-balance').innerHTML = `$${total.toFixed(2)} <span class="unit">USD</span>`;
-        document.getElementById('pnl').innerHTML = `PNL: -$2.14 (-0.15%)`; // mock data
-      } catch (e) {
-        console.error(e);
-        alert("เกิดข้อผิดพลาด");
-      }
-    }
-
-    window.showQR = showQR;
-    window.downloadQR = downloadQR;
-    window.hideQR = hideQR;
-
-    window.addEventListener("load", init);
-  </script>
 </body>
 </html>
 
