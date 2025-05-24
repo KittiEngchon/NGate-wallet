@@ -3,7 +3,7 @@
 async function connectWallet() {
   if (typeof window.ethereum === 'undefined') {
     toast("Metamask not found ❌");
-    return;
+    throw new Error("No wallet found");
   }
 
   try {
@@ -11,16 +11,19 @@ async function connectWallet() {
     const address = accounts[0];
     toast("Wallet connected ✅");
 
-    // อัปเดต DID และ GIG
+    // อัปเดตข้อมูลลงหน้าเว็บ
     document.getElementById("walletAddress").textContent = address;
     document.getElementById("did").textContent = "did:ngate:" + address;
     document.getElementById("gig").textContent = "gig:connected";
 
-    // เก็บไว้ใน localStorage
+    // เก็บใน localStorage
     localStorage.setItem("wallet", address);
+    return address;
+
   } catch (err) {
     console.error(err);
     toast("Connection failed ❌");
+    throw err;
   }
 }
 
@@ -47,14 +50,6 @@ function downloadQR() {
   link.href = canvas.toDataURL("image/png");
   link.click();
   toast("📥 QR ถูกดาวน์โหลดแล้ว");
-} 
-async function connectWallet() {
-  if (typeof window.ethereum !== 'undefined') {
-    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-    return accounts[0];
-  } else {
-    alert("Please install MetaMask.");
-    throw new Error("No wallet found");
-  }
 }
+
 
