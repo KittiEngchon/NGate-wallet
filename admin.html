@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel - NGate</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="libs/web3.min.js"></script>
+  <script src="wallet.js"></script>
+  <script src="kyc.js"></script>
+  <script src="ui.js"></script>
+</head>
+<body>
+  <header>
+    <h1>🛡️ NGate Admin Panel</h1>
+    <button onclick="connectWallet()">🔗 Connect Wallet</button>
+    <button onclick="toggleTheme()">🌓 Toggle Theme</button>
+  </header>
+
+  <section id="admin-area">
+    <h2>👥 รายชื่อผู้ใช้งาน</h2>
+    <table id="user-table">
+      <thead>
+        <tr>
+          <th>ชื่อ</th>
+          <th>Email</th>
+          <th>DID</th>
+          <th>Wallet</th>
+          <th>KYC</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <script>
+    async function loadAdmin() {
+      const address = localStorage.getItem("wallet");
+      if (!address) return toast("⚠️ กรุณาเชื่อม Wallet ก่อน");
+
+      const user = await getUserInfo(address);
+      if (!user || user.role !== 'admin') {
+        toast("❌ คุณไม่มีสิทธิ์เข้าถึงหน้านี้");
+        return;
+      }
+
+      const res = await fetch("user.json");
+      const users = await res.json();
+      const tbody = document.querySelector("#user-table tbody");
+
+      for (const u of users) {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${u.name}</td>
+          <td>${u.email}</td>
+          <td>${u.did}</td>
+          <td>${u.wallet}</td>
+          <td>${u.kyc ? "✅" : "❌"}</td>
+        `;
+        tbody.appendChild(row);
+      }
+    }
+
+    window.addEventListener("load", loadAdmin);
+  </script>
+</body>
+</html>
