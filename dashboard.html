@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NGate Wallet Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="libs/web3.min.js"></script>
+  <script src="wallet.js"></script>
+  <script src="balance.js"></script>
+  <script src="kyc.js"></script>
+  <script src="ui.js"></script>
+</head>
+<body>
+  <header>
+    <h1>📊 NGate Dashboard</h1>
+    <button onclick="connectWallet()">🔗 Connect Wallet</button>
+    <button onclick="toggleTheme()">🌓 Toggle Theme</button>
+  </header>
+
+  <section id="user-info"></section>
+
+  <section id="balances">
+    <h2>💰 สินทรัพย์ของคุณ</h2>
+    <ul id="asset-list"></ul>
+  </section>
+
+  <script>
+    async function loadDashboard() {
+      const address = localStorage.getItem("wallet");
+      if (!address) {
+        toast("❗ กรุณาเชื่อม Wallet ก่อน");
+        return;
+      }
+
+      const user = await getUserInfo(address);
+      if (user) {
+        document.getElementById("user-info").innerHTML = `
+          <p><strong>👤 DID:</strong> ${user.did}</p>
+          <p><strong>📧 Email:</strong> ${user.email}</p>
+          <p><strong>📛 ชื่อ:</strong> ${user.name}</p>
+        `;
+      }
+
+      const res = await fetch("assets.json");
+      const assets = await res.json();
+
+      const list = document.getElementById("asset-list");
+      for (let asset of assets) {
+        const balance = await getBalance(address, asset);
+        const item = document.createElement("li");
+        item.innerHTML = `
+          <img src="${asset.logo}" width="24" height="24" />
+          <strong>${asset.symbol}</strong>: ${balance.toFixed(4)}
+        `;
+        list.appendChild(item);
+      }
+    }
+
+    window.addEventListener("load", loadDashboard);
+  </script>
+</body>
+</html>
