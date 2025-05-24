@@ -256,3 +256,24 @@ th, td {
   background: #2a2a2a;
   color: white;
 }
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 9999;
+}
+.toast.show {
+  opacity: 1;
+}
+
+.dark {
+  background-color: #111;
+  color: #eee;
+}
